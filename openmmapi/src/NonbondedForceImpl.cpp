@@ -98,6 +98,8 @@ void NonbondedForceImpl::initialize(ContextImpl& context) {
             throw OpenMMException(msg.str());
         }
         exceptions[minp].insert(maxp);
+        if (!isfinite(chargeProd) || !isfinite(sigma) || !isfinite(epsilon))
+            throw OpenMMException("NonbondedForce: exception parameters must be finite");
         if (sigma < 0)
             throw OpenMMException("NonbondedForce: sigma for an exception cannot be negative");
         if (epsilon < 0)
