@@ -55,6 +55,8 @@ void GBSAOBCForceImpl::initialize(ContextImpl& context) {
     for (int i = 0; i < owner.getNumParticles(); i++) {
         double charge, radius, scalingFactor;
         owner.getParticleParameters(i, charge, radius, scalingFactor);
+        if (!isfinite(charge) || !isfinite(radius) || !isfinite(scalingFactor))
+            throw OpenMMException("GBSAOBCForce: particle parameters must be finite");
         if (radius <= 0)
             throw OpenMMException("GBSAOBCForce: particle radius must be positive");
         if (scalingFactor <= 0)
