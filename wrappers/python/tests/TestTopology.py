@@ -59,5 +59,21 @@ class TestTopology(unittest.TestCase):
         self.assertEqual(internal_bonds, [ (atom_B1, atom_B2) ])
         self.assertEqual(external_bonds, [ (atom_A1, atom_B1), (atom_B2, atom_C1) ])
 
+    def test_add_bond_rejects_atoms_from_another_topology(self):
+        first = Topology()
+        chain = first.addChain()
+        residue = first.addResidue('R', chain)
+        atom1 = first.addAtom('C', elem.carbon, residue)
+
+        second = Topology()
+        chain = second.addChain()
+        residue = second.addResidue('R', chain)
+        atom2 = second.addAtom('H', elem.hydrogen, residue)
+
+        with self.assertRaises(ValueError):
+            first.addBond(atom1, atom2)
+        self.assertEqual(first.getNumBonds(), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
