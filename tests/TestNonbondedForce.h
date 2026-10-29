@@ -344,6 +344,23 @@ void testPeriodic() {
     ASSERT_EQUAL_TOL(2*ONE_4PI_EPS0*(1.0)*(1.0+krf*1.0-crf), state.getPotentialEnergy(), TOL);
 }
 
+void testSelfExceptionRejected() {
+    System system;
+    system.addParticle(1.0);
+    NonbondedForce* force = new NonbondedForce();
+    force->addParticle(0.0, 1.0, 0.0);
+    force->addException(0, 0, 0.0, 1.0, 0.0);
+    system.addForce(force);
+    VerletIntegrator integrator(0.001);
+    try {
+        Context context(system, integrator, platform);
+        throw exception("A self exception should be rejected");
+    }
+    catch (const OpenMMException& e) {
+        ASSERT(String(e.what()).find("cannot connect a particle to itself") != String::npos);
+    }
+}
+
 void testPeriodicExceptions() {
     System system;
     system.addParticle(1.0);
@@ -1255,6 +1272,7 @@ int main(int argc, char* argv[]) {
         testCutoff14();
         testPeriodic();
         testPeriodicExceptions();
+        testSelfExceptionRejected();
         testTriclinic();
         testLargeSystem();
         testDispersionCorrection();

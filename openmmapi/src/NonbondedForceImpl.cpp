@@ -81,6 +81,8 @@ void NonbondedForceImpl::initialize(ContextImpl& context) {
         owner.getExceptionParameters(i, particle[0], particle[1], chargeProd, sigma, epsilon);
         int minp = min(particle[0], particle[1]);
         int maxp = max(particle[0], particle[1]);
+        if (particle[0] == particle[1])
+            throw OpenMMException("NonbondedForce: An exception cannot connect a particle to itself");
         for (int j = 0; j < 2; j++) {
             if (particle[j] < 0 || particle[j] >= owner.getNumParticles()) {
                 stringstream msg;
