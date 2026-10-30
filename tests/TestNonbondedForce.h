@@ -349,16 +349,18 @@ void testSelfExceptionRejected() {
     system.addParticle(1.0);
     NonbondedForce* force = new NonbondedForce();
     force->addParticle(0.0, 1.0, 0.0);
-    force->addException(0, 0, 0.0, 1.0, 0.0);
+    force->addException(0, 0, 0.1, 0.1, 0.1);
     system.addForce(force);
     VerletIntegrator integrator(0.001);
+    bool threw = false;
     try {
         Context context(system, integrator, platform);
-        throw exception("A self exception should be rejected");
     }
     catch (const OpenMMException& e) {
-        ASSERT(String(e.what()).find("cannot connect a particle to itself") != String::npos);
+        threw = true;
+        ASSERT(string(e.what()).find("cannot connect a particle to itself") != string::npos);
     }
+    ASSERT(threw);
 }
 
 void testPeriodicExceptions() {
